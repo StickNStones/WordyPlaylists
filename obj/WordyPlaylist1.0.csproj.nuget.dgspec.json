@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Work\\Summer\\PlaylistWebsite\\WordyPlaylist1.0\\TestLand\\WordyPlaylist1.0\\WordyPlaylist1.0.csproj": {}
+    "E:\\Work\\Summer\\PlaylistWebsite\\WordyPlaylist1.0\\TestLand\\WordyPlaylistGIT\\WordyPlaylist1.0.csproj": {}
   },
   "projects": {
-    "E:\\Work\\Summer\\PlaylistWebsite\\WordyPlaylist1.0\\TestLand\\WordyPlaylist1.0\\WordyPlaylist1.0.csproj": {
+    "E:\\Work\\Summer\\PlaylistWebsite\\WordyPlaylist1.0\\TestLand\\WordyPlaylistGIT\\WordyPlaylist1.0.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Work\\Summer\\PlaylistWebsite\\WordyPlaylist1.0\\TestLand\\WordyPlaylist1.0\\WordyPlaylist1.0.csproj",
+        "projectUniqueName": "E:\\Work\\Summer\\PlaylistWebsite\\WordyPlaylist1.0\\TestLand\\WordyPlaylistGIT\\WordyPlaylist1.0.csproj",
         "projectName": "WordyPlaylist1.0",
-        "projectPath": "E:\\Work\\Summer\\PlaylistWebsite\\WordyPlaylist1.0\\TestLand\\WordyPlaylist1.0\\WordyPlaylist1.0.csproj",
+        "projectPath": "E:\\Work\\Summer\\PlaylistWebsite\\WordyPlaylist1.0\\TestLand\\WordyPlaylistGIT\\WordyPlaylist1.0.csproj",
         "packagesPath": "C:\\Users\\ZacK\\.nuget\\packages\\",
-        "outputPath": "E:\\Work\\Summer\\PlaylistWebsite\\WordyPlaylist1.0\\TestLand\\WordyPlaylist1.0\\obj\\",
+        "outputPath": "E:\\Work\\Summer\\PlaylistWebsite\\WordyPlaylist1.0\\TestLand\\WordyPlaylistGIT\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

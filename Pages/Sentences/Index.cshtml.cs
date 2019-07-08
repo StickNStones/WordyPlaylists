@@ -27,60 +27,83 @@ namespace WordyPlaylist1._0.Pages.Sentences
             _context = context;
         }
 
-        public IList<Class> Class { get;set; }
+        public IList<Class> Class { get; set; }
 
         [BindProperty]
         [Required(ErrorMessage = "Have to search something!")]
         public string Sentences { get; set; } = "";
 
+        public string tempVar { get; set; } = "";
+
         [ViewData]
         public string postSentence { get; set; } = "";
 
-        public void Orange()
+        private string[] songNames { get; set; }
+
+        private static SpotifyWebAPI _spotify;
+
+        private void Orange()
         {
             postSentence = "orangze " + Sentences;
         }
 
         public async Task<IActionResult> OnGet()
         {
-            if (Sentences != "")
-            {
-             //   Sentences = await HttpContext.GetTokenAsync("Spotify", "access_token");
-            }
-            Orange();
             return Page();
         }
 
-        private static SpotifyWebAPI _spotify;
-
-        public async void aMain()
+        public void BuildPlaylist()
         {
 
             SpotifyController orange = new SpotifyController();
             ContentResult result = orange.GetSpot();
-            Sentences = HttpContext.Request.GetEncodedUrl().ToString().Split("=")[1];
-            ContentResult someThing = orange.Get(Sentences);
-            Sentences = someThing.Content.ToString();
-            if (Sentences != null)
+            tempVar = HttpContext.Request.GetEncodedUrl().ToString().Split("=")[1];
+            ContentResult someThing = orange.Get(tempVar);
+            tempVar = someThing.Content.ToString();
+            if (tempVar != null)
             {
-                dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject(Sentences);
+                dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject(tempVar);
                 string thisText = stuff1.access_token;
-                Sentences = thisText;
+                tempVar = thisText;
             }
 
             _spotify = new SpotifyWebAPI()
             {
-                AccessToken = Sentences,
+                AccessToken = tempVar,
                 TokenType = "Bearer"
             };
+            songNames = Sentences.Split(" ");
+            string asong = songNames[1];
+
             FullTrack track = _spotify.GetTrack("77oU2rjC5XbjQfNe3bD6so?si=1WJPdJrMRcCrScbjZqpFvg");
-            Sentences = track.Name;
+            PrivateProfile userProfile = _spotify.GetPrivateProfile();
+            FullPlaylist playlistName = _spotify.CreatePlaylist(userProfile.Id, Sentences);
+
+            foreach (string song in songNames)
+            {
+                SearchItem x = _spotify.SearchItems(song, SearchType.Track, 1);
+                Paging<FullTrack> yes = x.Tracks;
+                FullTrack trackName = yes.Items[0];
+
+                _spotify.AddPlaylistTrack(playlistName.Id, trackName.Uri); //(_spotify.SearchItems(song, SearchType.Track, 1, 0).Tracks.Items[0].Id));
+            }
+            tempVar = track.Name;
 
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            aMain();
+            BuildPlaylist();
+            Orange();
+
+
+
+            ModelState.Clear();
+
+
+
+
+
 
             if (!ModelState.IsValid)
             {
@@ -89,8 +112,8 @@ namespace WordyPlaylist1._0.Pages.Sentences
 
 
             return await OnGet();
-// return Redirect("/Sentences");
+            // return Redirect("/Sentences");
         }
-        
+
     }
 }
