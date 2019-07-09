@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -40,11 +41,11 @@ namespace WordyPlaylist1._0.Pages.Sentences
 
         private string[] songNames { get; set; }
 
-        private static SpotifyWebAPI _spotify;
+        private static SpotifyWebAPI _spotify = null;
 
         private void Orange()
         {
-            postSentence = "orangze " + Sentences;
+            postSentence = "Check your spotify for the playlist!";
         }
 
         public async Task<IActionResult> OnGet()
@@ -52,13 +53,12 @@ namespace WordyPlaylist1._0.Pages.Sentences
             return Page();
         }
 
-        public void BuildPlaylist()
+        public void spotifyConnect()
         {
-
-            SpotifyController orange = new SpotifyController();
-            ContentResult result = orange.GetSpot();
+            SpotifyController spotifyController = new SpotifyController();
+            ContentResult result = spotifyController.GetSpot();
             tempVar = HttpContext.Request.GetEncodedUrl().ToString().Split("=")[1];
-            ContentResult someThing = orange.Get(tempVar);
+            ContentResult someThing = spotifyController.Get(tempVar);
             tempVar = someThing.Content.ToString();
             if (tempVar != null)
             {
@@ -72,22 +72,61 @@ namespace WordyPlaylist1._0.Pages.Sentences
                 AccessToken = tempVar,
                 TokenType = "Bearer"
             };
-            songNames = Sentences.Split(" ");
-            string asong = songNames[1];
+        }
 
-            FullTrack track = _spotify.GetTrack("77oU2rjC5XbjQfNe3bD6so?si=1WJPdJrMRcCrScbjZqpFvg");
+        public void BuildPlaylist()
+        {
+            if (_spotify == null)
+            {
+                spotifyConnect();
+            }
+            songNames = Sentences.Split(" ");
+
+            FullTrack nullTrack = _spotify.GetTrack("5QeUZ1Z4xSCegBXutW3IIt");
             PrivateProfile userProfile = _spotify.GetPrivateProfile();
             FullPlaylist playlistName = _spotify.CreatePlaylist(userProfile.Id, Sentences);
 
             foreach (string song in songNames)
             {
-                SearchItem x = _spotify.SearchItems(song, SearchType.Track, 1);
-                Paging<FullTrack> yes = x.Tracks;
-                FullTrack trackName = yes.Items[0];
+                SearchItem searchResults = _spotify.SearchItems(song, SearchType.Track, 30);
 
-                _spotify.AddPlaylistTrack(playlistName.Id, trackName.Uri); //(_spotify.SearchItems(song, SearchType.Track, 1, 0).Tracks.Items[0].Id));
+                if (searchResults != null)
+                {
+                    Paging<FullTrack> trackList = searchResults.Tracks;
+
+                    if (trackList != null)
+                    {
+                        Boolean found = false;
+
+                        for (int i = 0; i < trackList.Items.Count; i++)
+                        {
+                            String testName = trackList.Items[i].Name;
+                            Match isMatch = Regex.Match(testName.ToLower(), "^" + song.ToLower());
+
+                            if (isMatch.Success)
+                            {
+                                FullTrack trackName = trackList.Items[i];
+                                _spotify.AddPlaylistTrack(playlistName.Id, trackName.Uri);
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if (!found && trackList.Items.Count > 0)
+                        {
+                            FullTrack trackName = trackList.Items[0];
+                            _spotify.AddPlaylistTrack(playlistName.Id, trackName.Uri);
+                        }
+                        else
+                        {
+                            _spotify.AddPlaylistTrack(playlistName.Id, nullTrack.Uri);
+                        }
+
+                    }
+                }
             }
-            tempVar = track.Name;
+            tempVar = nullTrack.Name;
+            Sentences = "";
 
         }
 
