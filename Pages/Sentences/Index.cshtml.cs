@@ -43,7 +43,7 @@ namespace WordyPlaylist1._0.Pages.Sentences
 
         private static SpotifyWebAPI _spotify = null;
 
-        private void Orange()
+        private void CompletionConfirmation()
         {
             postSentence = "Check your spotify for the playlist!";
         }
@@ -119,7 +119,8 @@ namespace WordyPlaylist1._0.Pages.Sentences
                         }
                         else
                         {
-                            _spotify.AddPlaylistTrack(playlistName.Id, nullTrack.Uri);
+                            // debug track
+                            //_spotify.AddPlaylistTrack(playlistName.Id, nullTrack.Uri);
                         }
 
                     }
@@ -133,7 +134,7 @@ namespace WordyPlaylist1._0.Pages.Sentences
         public async Task<IActionResult> OnPostAsync()
         {
             BuildPlaylist();
-            Orange();
+            CompletionConfirmation();
 
 
 
